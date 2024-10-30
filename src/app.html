@@ -2,7 +2,24 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<!-- <link rel="icon" href="%sveltekit.assets%/favicon.png" /> -->
+
+		<link
+			rel="icon"
+			href="%sveltekit.assets%/favicon-black.png"
+			media="(prefers-color-scheme: light)"
+		/>
+		<link
+			rel="icon"
+			href="%sveltekit.assets%/favicon-white.png"
+			media="(prefers-color-scheme: dark)"
+		/>
+
+		<link
+			rel="stylesheet"
+			href="https://api.fontshare.com/v2/css?f[]=satoshi@1&f[]=clash-display@600,700&f[]=jet-brains-mono@1&display=swap"
+		/>
+
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		%sveltekit.head%
 	</head>

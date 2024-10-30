@@ -72,4 +72,20 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+
+	.background-overlay {
+		background: radial-gradient(
+			ellipse 80% 80% at 50% -30%,
+			rgba(0, 0, 0, 0.55),
+			rgba(255, 255, 255, 0)
+		);
+	}
+
+	.dark .background-overlay {
+		background: radial-gradient(
+			ellipse 80% 80% at 50% -40%,
+			hsl(224, 76%, 48%),
+			rgba(255, 255, 255, 0)
+		);
+	}
 }
