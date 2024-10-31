@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Authentication from '$lib/img/authentication.avif?enhanced';
-
 	import { IsMobile } from '$lib/components/hooks/is-mobile.svelte';
 
 	const isMobile = new IsMobile();

@@ -5,6 +5,11 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { cn } from '$lib/components/utils.js';
 
+	import autoAnimate, {
+		type AnimationController,
+		type AutoAnimateOptions
+	} from '@formkit/auto-animate';
+
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 	import GitHub from 'lucide-svelte/icons/github';
 
@@ -24,6 +29,28 @@
 			isLoading = false;
 		}, 3000);
 	}
+
+	class AutoAnimate {
+		ref: HTMLElement | null = null;
+
+		constructor() {
+			return new Proxy(this, {
+				set(target, prop, value, receiver) {
+					if (prop === 'ref') {
+						if (value instanceof HTMLElement) {
+							receiver.ref = value;
+							autoAnimate(receiver.ref);
+						}
+						return false;
+					}
+
+					return true; // Indicate that the assignment has been done correctly
+				}
+			});
+		}
+	}
+
+	let btn = new AutoAnimate().ref;
 </script>
 
 <div class={cn('grid gap-6', className)} {...$$restProps}>
@@ -41,28 +68,24 @@
 					disabled={isLoading}
 				/>
 			</div>
-			<Button type="submit" disabled={isLoading}>
+			<Button type="submit" disabled={isLoading} bind:ref={btn}>
 				{#if isLoading}
-					<Icons.spinner class="mr-2 h-4 w-4 animate-spin" />
+					<Icons.spinner class="h-4 w-4 animate-spin" />
 				{/if}
-				Sign In with Email
+				<span>Sign In with Email</span>
 			</Button>
 		</div>
 	</form>
 	<div class="relative">
 		<div class="absolute inset-0 flex items-center">
-			<span class="w-full border-t" />
+			<span class="w-full border-t"></span>
 		</div>
 		<div class="relative flex justify-center text-xs uppercase">
 			<span class="bg-background px-2 text-muted-foreground"> Or continue with </span>
 		</div>
 	</div>
 	<Button variant="outline" type="button" disabled={isLoading}>
-		{#if isLoading}
-			<Icons.spinner class="mr-2 h-4 w-4 animate-spin" />
-		{:else}
-			<Icons.github class="mr-2 h-4 w-4" />
-		{/if}
-		GitHub
+		<Icons.github class="h-4 w-4" />
+		<span>GitHub</span>
 	</Button>
 </div>
