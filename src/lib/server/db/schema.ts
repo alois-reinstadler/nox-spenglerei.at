@@ -13,7 +13,7 @@ export const user = sqliteTable('user', {
 
 export const userRelations = relations(user, ({ many }) => ({
 	oauthConnections: many(oauthConnection),
-	documentationEntries: many(documentationEntry)
+	projectDocumentations: many(projectDocumentation)
 }));
 
 export const session = sqliteTable('session', {
@@ -55,11 +55,15 @@ export const project = sqliteTable('project', {
 	description: text('description'),
 	picture: text('picture'),
 
-	// adress
+	// address
 	locality: text('locality').notNull(),
 	postCode: text('post_code').notNull(),
 	street: text('street').notNull(),
 	apartment: text('street'),
+
+	// flags
+	isDone: integer('is_done', { mode: 'boolean' }).notNull(),
+	isDraft: integer('is_draft', { mode: 'boolean' }).notNull(),
 
 	// timestamps
 	updatedAt: integer('updated_at', { mode: 'timestamp' }),
@@ -67,14 +71,15 @@ export const project = sqliteTable('project', {
 });
 
 export const projectRelations = relations(project, ({ many }) => ({
-	documentation: many(documentationEntry)
+	documentation: many(projectDocumentation)
 }));
 
-export const documentationEntry = sqliteTable('documentation_entries', {
+export const projectDocumentation = sqliteTable('project_documentation', {
 	id: text('id').primaryKey(),
 
 	fileURL: text('file_url').notNull(),
 	fileName: text('file_name').notNull(),
+	fileSize: integer('filesize').notNull(),
 	fileExtension: text('file_extension').notNull(),
 	fileType: text('file_type', { enum: ['image', 'video', 'pdf'] }).notNull(),
 
@@ -89,20 +94,51 @@ export const documentationEntry = sqliteTable('documentation_entries', {
 	createdAt: integer('created_at', { mode: 'timestamp' }).notNull()
 });
 
-export const documentationEntryRelations = relations(documentationEntry, ({ one }) => ({
+export const projectDocumentationRelations = relations(projectDocumentation, ({ one }) => ({
 	user: one(user, {
-		fields: [documentationEntry.userId],
+		fields: [projectDocumentation.userId],
 		references: [user.id]
 	}),
 	project: one(project, {
-		fields: [documentationEntry.projectId],
+		fields: [projectDocumentation.projectId],
 		references: [project.id]
 	})
 }));
+
+// export const partnerCompany = sqliteTable('partner_company', {
+// 	id: text('id').primaryKey(),
+// 	label: text('label').notNull(),
+// 	description: text('description'),
+
+// 	email: text('email'),
+// 	phone: text('phone'),
+// 	avatar: text('avatar')
+// });
+
+// export const partnerCompanyRelations = relations(partnerCompany, ({ many }) => ({
+// 	contacts: many(partnerContact)
+// }));
+
+// export const partnerContact = sqliteTable('partner_contact', {
+// 	id: text('id').primaryKey(),
+// 	name: text('name').notNull(),
+
+// 	email: text('email'),
+// 	phone: text('phone'),
+
+// 	companyId: text('company_id')
+// });
+
+// export const partnerContactRelations = relations(partnerContact, ({ one }) => ({
+// 	partnerCompany: one(partnerContact, {
+// 		fields: [partnerContact.companyId],
+// 		references: [partnerCompany.id]
+// 	})
+// }));
 
 export type User = typeof user.$inferSelect;
 export type Session = typeof session.$inferSelect;
 export type OAuthConnection = typeof oauthConnection.$inferSelect;
 
 export type Project = typeof project.$inferSelect;
-export type DocumentationEntry = typeof documentationEntry.$inferSelect;
+export type ProjectDocumentation = typeof projectDocumentation.$inferSelect;
