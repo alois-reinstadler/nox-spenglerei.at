@@ -3,13 +3,17 @@
 	import UserAuthForm from '../(components)/auth-form.svelte';
 </script>
 
-<Button href="/sign-up" variant="ghost" class="absolute right-4 top-4 md:right-8 md:top-8">
+<Button
+	href="/sign-up"
+	variant="ghost"
+	class="absolute right-4 top-4 font-display md:right-8 md:top-8"
+>
 	Sign-up
 </Button>
 
 <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
 	<div class="flex flex-col space-y-2 text-center">
-		<h1 class="text-2xl font-semibold tracking-tight">Login to your account</h1>
+		<h1 class="font-display text-2xl font-semibold">Login to your account</h1>
 		<p class="text-sm text-muted-foreground">
 			Enter your email and password to login to your account
 		</p>

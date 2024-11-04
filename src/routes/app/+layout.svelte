@@ -11,7 +11,7 @@
 <Sidebar.Provider>
 	<div class="background-overlay absolute inset-0 -z-50 h-full w-full"></div>
 
-	<AppSidebar variant="floating" class="p-4 pr-0" />
+	<AppSidebar variant="floating" class="p-4 pr-0 " />
 	<Sidebar.Inset class="bg-transparent pt-4">
 		<header
 			class="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12"
