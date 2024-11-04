@@ -58,6 +58,7 @@
 		"@node-rs/argon2": "^1.1.0",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
+		"@tanstack/svelte-query": "^5.59.17",
 		"arctic": "^2.2.1",
 		"better-sqlite3": "^11.1.2",
 		"cobe": "^0.6.3",

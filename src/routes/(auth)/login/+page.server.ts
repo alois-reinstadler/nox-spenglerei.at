@@ -19,21 +19,21 @@ export const load: PageServerLoad = async (event) => {
 export const actions: Actions = {
 	login: async (event) => {
 		const formData = await event.request.formData();
-		const username = formData.get('username');
+		const email = formData.get('email');
 		const password = formData.get('password');
 
-		if (!validateUsername(username)) {
+		if (!validateUsername(email)) {
 			return fail(400, { message: 'Invalid username' });
 		}
 		if (!validatePassword(password)) {
 			return fail(400, { message: 'Invalid password' });
 		}
 
-		const results = await db.select().from(table.user).where(eq(table.user.username, username));
+		const results = await db.select().from(table.user).where(eq(table.user.email, email));
 
 		const existingUser = results.at(0);
 		if (!existingUser) {
-			return fail(400, { message: 'Incorrect username or password' });
+			return fail(400, { message: 'Incorrect email or password' });
 		}
 
 		const validPassword = await verify(existingUser.passwordHash, password, {
@@ -43,7 +43,7 @@ export const actions: Actions = {
 			parallelism: 1
 		});
 		if (!validPassword) {
-			return fail(400, { message: 'Incorrect username or password' });
+			return fail(400, { message: 'Incorrect email or password' });
 		}
 
 		const session = await auth.createSession(existingUser.id);
@@ -55,7 +55,7 @@ export const actions: Actions = {
 			secure: !dev
 		});
 
-		return redirect(302, '/demo/lucia');
+		return redirect(302, '/app');
 	}
 };
 

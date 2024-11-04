@@ -35,12 +35,13 @@
 			variant?: ButtonVariant;
 			size?: ButtonSize;
 			autoanimate?: boolean;
+			use?: Action;
 		};
 </script>
 
 <script lang="ts">
 	import { cn } from '$lib/components/utils.js';
-	import autoAnimate from '@formkit/auto-animate';
+	import type { Action } from 'svelte/action';
 
 	let {
 		class: className,
@@ -49,14 +50,20 @@
 		ref = $bindable(null),
 		href = undefined,
 		type = 'button',
-		autoanimate,
+		use = () => {},
 		children,
 		...restProps
 	}: ButtonProps = $props();
 </script>
 
 {#if href}
-	<a bind:this={ref} class={cn(buttonVariants({ variant, size, className }))} {href} {...restProps}>
+	<a
+		bind:this={ref}
+		class={cn(buttonVariants({ variant, size, className }))}
+		{href}
+		{...restProps}
+		use:use
+	>
 		{@render children?.()}
 	</a>
 {:else}
@@ -65,6 +72,7 @@
 		class={cn(buttonVariants({ variant, size, className }))}
 		{type}
 		{...restProps}
+		use:use
 	>
 		{@render children?.()}
 	</button>

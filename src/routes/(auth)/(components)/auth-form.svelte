@@ -1,60 +1,33 @@
 <script lang="ts">
-	// import { Icons } from '$lib/components/docs/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { cn } from '$lib/components/utils.js';
 
-	import autoAnimate, {
-		type AnimationController,
-		type AutoAnimateOptions
-	} from '@formkit/auto-animate';
+	import type { WithElementRef } from 'bits-ui';
+	import type { HTMLAttributes } from 'svelte/elements';
+
+	import autoanimate from '@formkit/auto-animate';
 
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
-	import GitHub from 'lucide-svelte/icons/github';
+	import Google from './google-logo.svelte';
+
+	let isLoading = $state(false);
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLFormElement>> = $props();
 
 	const Icons = {
 		spinner: LoaderCircle,
-		github: GitHub
+		google: Google
 	};
-
-	let className: string | undefined | null = undefined;
-	export { className as class };
-
-	let isLoading = false;
-	async function onSubmit() {
-		isLoading = true;
-
-		setTimeout(() => {
-			isLoading = false;
-		}, 3000);
-	}
-
-	class AutoAnimate {
-		ref: HTMLElement | null = null;
-
-		constructor() {
-			return new Proxy(this, {
-				set(target, prop, value, receiver) {
-					if (prop === 'ref') {
-						if (value instanceof HTMLElement) {
-							receiver.ref = value;
-							autoAnimate(receiver.ref);
-						}
-						return false;
-					}
-
-					return true; // Indicate that the assignment has been done correctly
-				}
-			});
-		}
-	}
-
-	let btn = new AutoAnimate().ref;
 </script>
 
-<div class={cn('grid gap-6', className)} {...$$restProps}>
-	<form on:submit|preventDefault={onSubmit}>
+<div class={cn('grid gap-6', className)}>
+	<form bind:this={ref} {...restProps} on:submit|preventDefault={onsubmit}>
 		<div class="grid gap-2">
 			<div class="grid gap-1">
 				<Label class="sr-only" for="email">Email</Label>
@@ -68,7 +41,7 @@
 					disabled={isLoading}
 				/>
 			</div>
-			<Button type="submit" disabled={isLoading} bind:ref={btn}>
+			<Button type="submit" disabled={isLoading} use={autoanimate}>
 				{#if isLoading}
 					<Icons.spinner class="h-4 w-4 animate-spin" />
 				{/if}
@@ -85,7 +58,7 @@
 		</div>
 	</div>
 	<Button variant="outline" type="button" disabled={isLoading}>
-		<Icons.github class="h-4 w-4" />
-		<span>GitHub</span>
+		<Icons.google class="h-4 w-4" />
+		<span>Google</span>
 	</Button>
 </div>
