@@ -11,7 +11,7 @@ export const user = sqliteTable('user', {
 	lastName: text('last_name').notNull(),
 
 	googleId: text('google_id'),
-	avatar: text('avatar'),
+	avatar: text('avatar'), // size 96x96
 	phone: text('phone')
 });
 

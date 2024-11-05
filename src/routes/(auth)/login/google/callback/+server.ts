@@ -43,10 +43,10 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const claims = decodeIdToken(tokens.idToken());
 	const claimsParser = new ObjectParser(claims);
 
-	const email = claimsParser.getString('email');
-	const googleId = claimsParser.getString('sub');
 	const name = claimsParser.getString('name');
+	const email = claimsParser.getString('email');
 	const picture = claimsParser.getString('picture');
+	const googleId = claimsParser.getString('sub');
 
 	const existingUser = await db.query.user.findFirst({
 		where: (user, { eq, or }) => or(eq(user.googleId, googleId), eq(user.email, email))
@@ -54,8 +54,14 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	if (!existingUser) {
 		// redirect to sign-up with oauth information
-		const [firstName, ...rest] = name.split(' ');
-		const lastName = rest.join(' ');
+		let firstName: string = name;
+		let lastName: string = '';
+
+		const i = name.lastIndexOf(' ');
+		if (i > 0) {
+			firstName = name.slice(0, i);
+			lastName = name.slice(i, name.length);
+		}
 
 		const params = new URLSearchParams({ email, googleId, firstName, lastName, avatar: picture });
 		return redirect(302, '/sign-up?' + params.toString());
