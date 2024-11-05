@@ -1,16 +1,18 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { cn } from '$lib/components/utils.js';
 
-	import type { WithElementRef } from 'bits-ui';
-	import type { HTMLAttributes } from 'svelte/elements';
+	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
+	import Google from './google-logo.svelte';
 
 	import autoanimate from '@formkit/auto-animate';
 
-	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
-	import Google from './google-logo.svelte';
+	import type { WithElementRef } from 'bits-ui';
+	import type { HTMLAttributes } from 'svelte/elements';
 
 	let isLoading = $state(false);
 

@@ -3,10 +3,9 @@ import { decodeIdToken } from 'arctic';
 
 import { db } from '$lib/server/db';
 import { google } from '$lib/server/oauth';
-import { createSession, generateSessionToken, setSessionTokenCookie } from '$lib/server/auth';
+import { createSession } from '$lib/server/auth';
 
 import * as auth from '$lib/server/auth';
-import * as table from '$lib/server/db/schema';
 
 import { dev } from '$app/environment';
 import { redirect, error } from '@sveltejs/kit';
@@ -21,12 +20,15 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const code = event.url.searchParams.get('code');
 	const state = event.url.searchParams.get('state');
 
+	console.table({ state, codeVerifier, code, storedState });
+	console.table(event.cookies.getAll());
+
 	if (storedState === null || codeVerifier === null || code === null || state === null) {
-		return error(400, 'Please restart the process.');
+		return error(400, 'Please restart the process. 1');
 	}
 
 	if (storedState !== state) {
-		return error(400, 'Please restart the process.');
+		return error(400, 'Please restart the process. 2');
 	}
 
 	let tokens: OAuth2Tokens;
@@ -47,12 +49,16 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const picture = claimsParser.getString('picture');
 
 	const existingUser = await db.query.user.findFirst({
-		where: (table, { eq, or }) => or(eq(table.googleId, googleId), eq(table.email, email))
+		where: (user, { eq, or }) => or(eq(user.googleId, googleId), eq(user.email, email))
 	});
 
 	if (!existingUser) {
 		// redirect to sign-up with oauth information
-		return redirect(302, '/sign-up?');
+		const [firstName, ...rest] = name.split(' ');
+		const lastName = rest.join(' ');
+
+		const params = new URLSearchParams({ email, googleId, firstName, lastName, avatar: picture });
+		return redirect(302, '/sign-up?' + params.toString());
 	}
 
 	const session = await createSession(existingUser.id);

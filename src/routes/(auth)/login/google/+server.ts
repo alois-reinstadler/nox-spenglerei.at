@@ -10,6 +10,9 @@ export function GET(event: RequestEvent): Response {
 	const codeVerifier = generateCodeVerifier();
 	const url = google.createAuthorizationURL(state, codeVerifier, ['openid', 'profile', 'email']);
 
+	console.table({ state, codeVerifier });
+	console.table(event.cookies.getAll());
+
 	event.cookies.set('google_oauth_state', state, {
 		path: '/',
 		sameSite: 'lax',
