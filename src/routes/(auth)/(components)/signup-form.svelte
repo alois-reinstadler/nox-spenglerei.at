@@ -29,6 +29,34 @@
 <div class={cn('grid gap-6', className)}>
 	<form bind:this={ref} {...restProps} on:submit|preventDefault={onsubmit}>
 		<div class="grid gap-2">
+			<div class="grid grid-cols-2 gap-2">
+				<div class="grid gap-1">
+					<Label class="sr-only" for="firstName">First name</Label>
+					<Input
+						id="firstName"
+						placeholder="First name"
+						type="text"
+						autocapitalize="on"
+						autocomplete="name"
+						autocorrect="off"
+						disabled={isLoading}
+					/>
+				</div>
+
+				<div class="grid gap-1">
+					<Label class="sr-only" for="lastName">Last Name</Label>
+					<Input
+						id="lastName"
+						placeholder="Last Name"
+						type="text"
+						autocapitalize="on"
+						autocomplete="name"
+						autocorrect="off"
+						disabled={isLoading}
+					/>
+				</div>
+			</div>
+
 			<div class="grid gap-1">
 				<Label class="sr-only" for="email">Email</Label>
 				<Input
@@ -45,7 +73,7 @@
 				<Label class="sr-only" for="password">Password</Label>
 				<Input
 					id="password"
-					placeholder="password"
+					placeholder="Secure password"
 					type="password"
 					autocapitalize="none"
 					autocomplete="current-password"

@@ -71,20 +71,24 @@
 				{ location: [41.0082, 28.9784], size: 0.06 }
 			],
 
-			onRender: onRender
+			onRender,
+			context: {
+				alpha: true
+			}
 		});
 
 		// Removes the resize event listener when the component is unmounted to prevent memory leaks
 		return () => {
 			window.removeEventListener('resize', onResize);
+			globe.destroy();
 		};
 	});
 </script>
 
-<main class={cn('absolute inset-0 mx-auto aspect-[1/1] w-full max-w-[600px]', className)}>
+<div class={cn('absolute inset-0 mx-auto aspect-square w-full max-w-[600px]', className)}>
 	<canvas
 		bind:this={ref}
-		class="h-full w-full [contain:layout_paint_size]"
+		class="aspect-square h-full w-full [contain:layout_paint_size]"
 		{...restProps}
 		onpointerdown={(e) => {
 			pointerInteracting = e.clientX - pointerInteractionMovement;
@@ -107,4 +111,4 @@
 			}
 		}}
 	></canvas>
-</main>
+</div>

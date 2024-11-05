@@ -19,18 +19,33 @@ export const load: PageServerLoad = async (event) => {
 export const actions: Actions = {
 	register: async (event) => {
 		const formData = await event.request.formData();
-		const username = formData.get('username');
+
+		const email = formData.get('email');
 		const password = formData.get('password');
 
-		if (!validateUsername(username)) {
-			return fail(400, { message: 'Invalid username' });
-		}
-		if (!validatePassword(password)) {
-			return fail(400, { message: 'Invalid password' });
+		const firstName = formData.get('firstName');
+		const lastName = formData.get('lastName');
+
+		const avatar = formData.get('avatar');
+		const phone = formData.get('phone');
+
+		const { data, error } = auth.insertUserSchema.safeParse({
+			email,
+			password,
+
+			firstName,
+			lastName,
+
+			avatar,
+			phone
+		});
+
+		if (!data) {
+			return fail(400, { message: error.message });
 		}
 
 		const userId = generateUserId();
-		const passwordHash = await hash(password, {
+		const passwordHash = await hash(data.password, {
 			// recommended minimum parameters
 			memoryCost: 19456,
 			timeCost: 2,
@@ -39,7 +54,15 @@ export const actions: Actions = {
 		});
 
 		try {
-			await db.insert(table.user).values({ id: userId, username, passwordHash });
+			await db.insert(table.user).values({
+				id: userId,
+				email: email,
+				password: passwordHash,
+				firstName,
+				lastName,
+				avatar,
+				phone
+			});
 
 			const session = await auth.createSession(userId);
 			event.cookies.set(auth.sessionCookieName, session.id, {
@@ -53,7 +76,8 @@ export const actions: Actions = {
 		} catch (e) {
 			return fail(500, { message: 'An error has occurred' });
 		}
-		return redirect(302, '/demo/lucia');
+
+		return redirect(302, '/app');
 	}
 };
 

@@ -1,11 +1,16 @@
-import { eq } from 'drizzle-orm';
 import { sha256 } from '@oslojs/crypto/sha2';
+import { generateRandomString } from '@oslojs/crypto/random';
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
+
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 
+import { eq } from 'drizzle-orm';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
+const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_';
 export const sessionCookieName = 'auth-session';
 
 function generateSessionToken(): string {
@@ -14,14 +19,20 @@ function generateSessionToken(): string {
 	return token;
 }
 
+export function generateId(length = 21): string {
+	return generateRandomString({ read: (bytes) => crypto.getRandomValues(bytes) }, alphabet, length);
+}
+
 export async function createSession(userId: string): Promise<table.Session> {
 	const token = generateSessionToken();
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+
 	const session: table.Session = {
 		id: sessionId,
 		userId,
 		expiresAt: new Date(Date.now() + DAY_IN_MS * 30)
 	};
+
 	await db.insert(table.session).values(session);
 	return session;
 }
@@ -34,7 +45,7 @@ export async function validateSession(sessionId: string) {
 	const [result] = await db
 		.select({
 			// Adjust user table here to tweak returned data
-			user: { id: table.user.id, username: table.user.username },
+			user: { id: table.user.id, email: table.user.email },
 			session: table.session
 		})
 		.from(table.session)
@@ -45,8 +56,8 @@ export async function validateSession(sessionId: string) {
 		return { session: null, user: null };
 	}
 	const { session, user } = result;
-
 	const sessionExpired = Date.now() >= session.expiresAt.getTime();
+
 	if (sessionExpired) {
 		await db.delete(table.session).where(eq(table.session.id, session.id));
 		return { session: null, user: null };
@@ -65,3 +76,9 @@ export async function validateSession(sessionId: string) {
 }
 
 export type SessionValidationResult = Awaited<ReturnType<typeof validateSession>>;
+
+export const insertUserSchema = createInsertSchema(table.user);
+export const selectUserSchema = createSelectSchema(table.user);
+
+export const insertSessionSchema = createInsertSchema(table.session);
+export const selectSessionSchema = createSelectSchema(table.session);

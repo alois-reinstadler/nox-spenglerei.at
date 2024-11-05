@@ -1,18 +1,21 @@
 import { relations } from 'drizzle-orm';
-import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
 export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
 
 	email: text('email').notNull().unique(),
-	passwordHash: text('password_hash').notNull(),
+	password: text('password').notNull(),
 
 	firstName: text('first_name').notNull(),
-	lastName: text('last_name').notNull()
+	lastName: text('last_name').notNull(),
+
+	googleId: text('google_id'),
+	avatar: text('avatar'),
+	phone: text('phone')
 });
 
 export const userRelations = relations(user, ({ many }) => ({
-	oauthConnections: many(oauthConnection),
 	projectDocumentations: many(projectDocumentation)
 }));
 
@@ -24,28 +27,6 @@ export const session = sqliteTable('session', {
 
 	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull()
 });
-
-export const oauthConnection = sqliteTable(
-	'oauth_connection',
-	{
-		providerId: text('provider_id').notNull(),
-		providerName: text('provider_name').notNull(),
-
-		userId: text('user_id')
-			.notNull()
-			.references(() => user.id)
-	},
-	(table) => ({
-		pk: primaryKey({ columns: [table.providerId, table.providerName] })
-	})
-);
-
-export const oauthConnectionRelations = relations(oauthConnection, ({ one }) => ({
-	user: one(user, {
-		fields: [oauthConnection.userId],
-		references: [user.id]
-	})
-}));
 
 export const project = sqliteTable('project', {
 	id: text('id').primaryKey(), // slug
@@ -79,7 +60,7 @@ export const projectDocumentation = sqliteTable('project_documentation', {
 
 	fileURL: text('file_url').notNull(),
 	fileName: text('file_name').notNull(),
-	fileSize: integer('filesize').notNull(),
+	fileSize: integer('file_size').notNull(),
 	fileExtension: text('file_extension').notNull(),
 	fileType: text('file_type', { enum: ['image', 'video', 'pdf'] }).notNull(),
 
@@ -105,40 +86,52 @@ export const projectDocumentationRelations = relations(projectDocumentation, ({ 
 	})
 }));
 
-// export const partnerCompany = sqliteTable('partner_company', {
-// 	id: text('id').primaryKey(),
-// 	label: text('label').notNull(),
-// 	description: text('description'),
+export const partnerContact = sqliteTable('partner_contact', {
+	id: text('id').primaryKey(),
+	name: text('name').notNull(),
 
-// 	email: text('email'),
-// 	phone: text('phone'),
-// 	avatar: text('avatar')
-// });
+	email: text('email'),
+	phone: text('phone'),
 
-// export const partnerCompanyRelations = relations(partnerCompany, ({ many }) => ({
-// 	contacts: many(partnerContact)
-// }));
+	companyId: text('company_id').references(() => partnerCompany.id)
+});
 
-// export const partnerContact = sqliteTable('partner_contact', {
-// 	id: text('id').primaryKey(),
-// 	name: text('name').notNull(),
+export const partnerContactRelations = relations(partnerContact, ({ one }) => ({
+	partnerCompany: one(partnerCompany, {
+		fields: [partnerContact.companyId],
+		references: [partnerCompany.id]
+	})
+}));
 
-// 	email: text('email'),
-// 	phone: text('phone'),
+export const partnerCompany = sqliteTable('partner_company', {
+	id: text('id').primaryKey(),
+	label: text('label').notNull(),
+	description: text('description'),
 
-// 	companyId: text('company_id')
-// });
+	email: text('email'),
+	phone: text('phone'),
+	avatar: text('avatar')
+});
 
-// export const partnerContactRelations = relations(partnerContact, ({ one }) => ({
-// 	partnerCompany: one(partnerContact, {
-// 		fields: [partnerContact.companyId],
-// 		references: [partnerCompany.id]
-// 	})
-// }));
+export const partnerCompanyRelations = relations(partnerCompany, ({ many }) => ({
+	contacts: many(partnerContact)
+}));
 
+// types
 export type User = typeof user.$inferSelect;
+export type UserDTO = typeof user.$inferInsert;
+
 export type Session = typeof session.$inferSelect;
-export type OAuthConnection = typeof oauthConnection.$inferSelect;
+export type SessionDTO = typeof session.$inferInsert;
 
 export type Project = typeof project.$inferSelect;
+export type ProjectDTO = typeof project.$inferInsert;
+
 export type ProjectDocumentation = typeof projectDocumentation.$inferSelect;
+export type ProjectDocumentationDTO = typeof projectDocumentation.$inferInsert;
+
+export type PartnerContact = typeof partnerContact.$inferSelect;
+export type PartnerContactDTO = typeof partnerContact.$inferInsert;
+
+export type PartnerCompany = typeof partnerCompany.$inferSelect;
+export type PartnerCompanyDTO = typeof partnerCompany.$inferInsert;
