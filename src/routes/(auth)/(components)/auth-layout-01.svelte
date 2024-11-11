@@ -25,7 +25,7 @@
 			/>
 		{/if}
 		<div class="relative z-20 mt-auto">
-			<blockquote class="space-y-2">
+			<blockquote class="space-y-2 text-background">
 				<p class="text-lg">
 					&ldquo;This library has saved me countless hours of work and helped me deliver stunning
 					designs to my clients faster than ever before. Highly recommended!&rdquo;

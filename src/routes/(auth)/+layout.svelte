@@ -1,5 +1,5 @@
 <script lang="ts">
-	import AuthLayout from './(components)/auth-layout-02.svelte';
+	import AuthLayout from './(components)/auth-layout-01.svelte';
 	let { children } = $props();
 </script>
 

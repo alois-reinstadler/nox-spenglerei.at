@@ -1,12 +1,12 @@
-import { fail, redirect } from '@sveltejs/kit';
-import { generateRandomString } from '@oslojs/crypto/random';
-import { hash } from '@node-rs/argon2';
-
-import { db } from '$lib/server/db';
+import { dev } from '$app/environment';
 import * as auth from '$lib/server/auth';
+import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 
-import { dev } from '$app/environment';
+import { hash } from '@node-rs/argon2';
+import { generateRandomString } from '@oslojs/crypto/random';
+import { fail, redirect } from '@sveltejs/kit';
+
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
@@ -87,15 +87,15 @@ function generateUserId(length = 21): string {
 	return generateRandomString({ read: (bytes) => crypto.getRandomValues(bytes) }, alphabet, length);
 }
 
-function validateUsername(username: unknown): username is string {
-	return (
-		typeof username === 'string' &&
-		username.length >= 3 &&
-		username.length <= 31 &&
-		/^[a-z0-9_-]+$/.test(username)
-	);
-}
+// function validateUsername(username: unknown): username is string {
+// 	return (
+// 		typeof username === 'string' &&
+// 		username.length >= 3 &&
+// 		username.length <= 31 &&
+// 		/^[a-z0-9_-]+$/.test(username)
+// 	);
+// }
 
-function validatePassword(password: unknown): password is string {
-	return typeof password === 'string' && password.length >= 6 && password.length <= 255;
-}
+// function validatePassword(password: unknown): password is string {
+// 	return typeof password === 'string' && password.length >= 6 && password.length <= 255;
+// }

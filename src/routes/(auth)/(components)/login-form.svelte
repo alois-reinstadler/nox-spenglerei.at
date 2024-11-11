@@ -41,6 +41,19 @@
 					disabled={isLoading}
 				/>
 			</div>
+			<div class="grid gap-1">
+				<Label class="sr-only" for="password">password</Label>
+				<Input
+					id="password"
+					placeholder="Secure password"
+					type="password"
+					autocapitalize="none"
+					autocomplete="current-password"
+					autocorrect="off"
+					disabled={isLoading}
+				/>
+			</div>
+
 			<Button type="submit" disabled={isLoading} use={autoanimate}>
 				{#if isLoading}
 					<Icons.spinner class="h-4 w-4 animate-spin" />
