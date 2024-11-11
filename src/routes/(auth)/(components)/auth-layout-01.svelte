@@ -1,5 +1,7 @@
 <script lang="ts">
-	import Authentication from '$lib/img/authentication.avif?enhanced';
+	// import Authentication from '$lib/img/authentication.avif?enhanced';
+	// import Authentication from '$lib/img/authentication.avif?enhanced';
+	import Authentication from '$lib/img/goek-02.jpg?enhanced';
 	import { IsMobile } from '$lib/components/hooks/is-mobile.svelte';
 
 	import type { Snippet } from 'svelte';
@@ -21,7 +23,7 @@
 			<enhanced:img
 				src={Authentication}
 				alt="Authentication"
-				class="absolute inset-0 min-h-full min-w-full"
+				class="absolute left-0 top-0 min-h-full min-w-full -translate-y-[20%] brightness-50"
 			/>
 		{/if}
 		<div class="relative z-20 mt-auto">
